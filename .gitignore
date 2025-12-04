@@ -8,7 +8,7 @@ terraform/.terraform/
 
 # Arquivos locais com credenciais
 terraform/provider-local.tf
-terraform/provider.tf
+
 
 # Binários (terraform.exe, etc.)
 *.exe
