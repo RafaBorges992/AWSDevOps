@@ -1,0 +1,14 @@
+# Terraform state (não versionar)
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/terraform.tfstate.d/
+
+# Diretório de plugins/providers (pode ter .exe gigante)
+terraform/.terraform/
+
+# Arquivos locais com credenciais
+terraform/provider-local.tf
+terraform/provider.tf
+
+# Binários (terraform.exe, etc.)
+*.exe
