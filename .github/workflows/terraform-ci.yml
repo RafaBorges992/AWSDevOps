@@ -13,7 +13,6 @@ jobs:
   terraform:
     runs-on: ubuntu-latest
 
-    # Todas as execuções do job vão rodar dentro da pasta terraform
     defaults:
       run:
         working-directory: ./terraform
@@ -22,6 +21,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: us-east-1
+
 
     steps:
       - name: Checkout code
