@@ -1,6 +1,7 @@
+# SG da aplicação (HTTP 80 aberto para a Internet)
 resource "aws_security_group" "app" {
-  name        = "app-sg"
-  description = "Security group for app instances"
+  name        = "app-sg-v2"                 # <<< mudei aqui
+  description = "Security group for app instance"
   vpc_id      = aws_vpc.main.id
 
   ingress {
@@ -19,7 +20,7 @@ resource "aws_security_group" "app" {
   }
 
   tags = {
-    Name    = "sg-app"
+    Name    = "app-sg-v2"                   # opcional, só pra bater com o name
     Project = var.project_name
   }
 }
