@@ -1,6 +1,9 @@
-# SG da aplicação (HTTP 80 aberto para a Internet)
+# Security Group da aplicação (porta 80 aberta para HTTP)
 resource "aws_security_group" "app" {
-  name        = "app-sg-v2"                 # <<< mudei aqui
+  # Em vez de name fixo, usamos um prefixo.
+  # A AWS vai gerar algo como "app-sg-abc123", evitando conflito de nomes.
+  name_prefix = "app-sg-"
+
   description = "Security group for app instance"
   vpc_id      = aws_vpc.main.id
 
@@ -20,7 +23,7 @@ resource "aws_security_group" "app" {
   }
 
   tags = {
-    Name    = "app-sg-v2"                   # opcional, só pra bater com o name
+    Name    = "app-sg"          # Tag de nome (não dá erro de duplicado)
     Project = var.project_name
   }
 }
