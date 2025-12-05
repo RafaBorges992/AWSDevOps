@@ -1,36 +1,39 @@
+# Role que a EC2 vai assumir
 resource "aws_iam_role" "ec2_role" {
   name = "role-ec2-app"
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        }
-        Action = "sts:AssumeRole"
-      }
-    ]
-  })
+  assume_role_policy = data.aws_iam_policy_document.ec2_assume_role.json
+}
 
-  tags = {
-    Project = var.project_name
+# Política de trust para a EC2 assumir a role
+data "aws_iam_policy_document" "ec2_assume_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
   }
 }
 
-# Política inline: DynamoDB + CloudWatch (já existia)
+# Política customizada: DynamoDB + CloudWatch
 data "aws_iam_policy_document" "ec2_policy" {
   statement {
-    effect = "Allow"
+    sid     = "DynamoDBAccess"
+    effect  = "Allow"
     actions = [
-      "dynamodb:*"
+      "dynamodb:PutItem",
+      "dynamodb:GetItem",
+      "dynamodb:Scan",
+      "dynamodb:UpdateItem",
     ]
-    resources = ["*"]
+    resources = [aws_dynamodb_table.produtos.arn]
   }
 
   statement {
-    effect = "Allow"
+    sid     = "CloudWatchLogs"
+    effect  = "Allow"
     actions = [
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
@@ -41,23 +44,26 @@ data "aws_iam_policy_document" "ec2_policy" {
 }
 
 resource "aws_iam_policy" "ec2_policy" {
-  name   = "policy-ec2-dynamodb-cloudwatch"
+  name        = "policy-ec2-dynamodb-cloudwatch"
+  description = "Permite EC2 acessar DynamoDB e CloudWatch Logs"
+
   policy = data.aws_iam_policy_document.ec2_policy.json
 }
 
-resource "aws_iam_role_policy_attachment" "ec2_ssm" {
-  role       = aws_iam_role.ec2_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-}
-
-# NOVO: permitir SSM (Session Manager)
-resource "aws_iam_role_policy_attachment" "ec2_ssm" {
-  role       = aws_iam_role.ec2_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-}
-
-# Profile da EC2
+# Instance profile para associar à EC2
 resource "aws_iam_instance_profile" "ec2_profile" {
   name = "instance-profile-ec2-app"
   role = aws_iam_role.ec2_role.name
+}
+
+# Anexa a política customizada à role
+resource "aws_iam_role_policy_attachment" "ec2_attach" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = aws_iam_policy.ec2_policy.arn
+}
+
+# Anexa a política gerenciada do SSM (para Session Manager)
+resource "aws_iam_role_policy_attachment" "ec2_ssm" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
