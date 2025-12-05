@@ -1,4 +1,4 @@
-# AMI Amazon Linux 2 
+# AMI Amazon Linux 2 teste
 data "aws_ami" "amazon_linux2" {
   most_recent = true
   owners      = ["amazon"]
