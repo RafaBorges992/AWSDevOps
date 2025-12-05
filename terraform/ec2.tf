@@ -53,9 +53,8 @@ resource "aws_instance" "app" {
   associate_public_ip_address = true
   user_data                   = local.user_data
 
-
   tags = {
-    Name    = "EC2-microservices"
+    Name    = "EC2-microservices-v2"  # força recriação da instância
     Project = var.project_name
   }
 }
