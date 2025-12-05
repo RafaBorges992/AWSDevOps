@@ -45,9 +45,9 @@ resource "aws_iam_policy" "ec2_policy" {
   policy = data.aws_iam_policy_document.ec2_policy.json
 }
 
-resource "aws_iam_role_policy_attachment" "ec2_attach" {
+resource "aws_iam_role_policy_attachment" "ec2_ssm" {
   role       = aws_iam_role.ec2_role.name
-  policy_arn = aws_iam_policy.ec2_policy.arn
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 # NOVO: permitir SSM (Session Manager)
