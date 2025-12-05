@@ -1,9 +1,8 @@
 resource "aws_security_group" "app" {
   name        = "app-sg"
-  description = "Security group for app instance"
+  description = "Security group for app instances"
   vpc_id      = aws_vpc.main.id
 
-  # HTTP 80 liberado pro mundo (p/ teste)
   ingress {
     description = "HTTP from anywhere"
     from_port   = 80
@@ -20,7 +19,7 @@ resource "aws_security_group" "app" {
   }
 
   tags = {
-    Name    = "app-sg"
+    Name    = "sg-app"
     Project = var.project_name
   }
 }
